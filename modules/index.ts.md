@@ -12,28 +12,21 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
-- [Greetings](#greetings)
-  - [greet](#greet)
+- [Model](#model)
+  - [Vec (type alias)](#vec-type-alias)
 
 ---
 
-# Greetings
+# Model
 
-## greet
+## Vec (type alias)
 
-It's a greeting
+Vector type of length `N` with fields of type `A`
 
 **Signature**
 
 ```ts
-export declare const greet: (name: string) => string
-```
-
-**Example**
-
-```ts
-import { greet } from 'fp-ts-library-template'
-assert.deepStrictEqual(greet('World'), 'Hello, World!')
+export type Vec<N extends number, A> = TupleOf<N, A>
 ```
 
 Added in v1.0.0
