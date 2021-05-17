@@ -1,9 +1,53 @@
+import * as $ from '../src';
 import * as fc from 'fast-check';
+import { pipe } from 'fp-ts/function';
 
-describe('index', () => {
-  it('greets anything', () => {
-    fc.property(fc.string(), (name) => {
-      expect(1).toBe(1);
+describe('empty', () => {
+  it('creates an empty array', () => {
+    expect($.empty()).toStrictEqual([]);
+  });
+});
+
+describe('prepend', () => {
+  it('prepends at the beginning', () => {
+    fc.property(fc.string(), fc.string(), (x1, x2) => {
+      expect(
+        pipe($.empty<string>(), $.prepend(x1), $.prepend(x2))
+      ).toStrictEqual([x2, x1]);
+    });
+  });
+});
+
+describe('append', () => {
+  it('appends at the end', () => {
+    fc.property(fc.string(), fc.string(), (x1, x2) => {
+      expect(
+        pipe($.empty<string>(), $.append(x1), $.append(x2))
+      ).toStrictEqual([x1, x2]);
+    });
+  });
+});
+
+describe('singleton', () => {
+  it('creates array of length 1', () => {
+    fc.property(fc.string(), (x1) => {
+      expect(pipe($.singleton(x1))).toStrictEqual([x1]);
+    });
+  });
+});
+
+describe('vec2', () => {
+  it('creates array of length 2', () => {
+    fc.property(fc.string(), fc.string(), (x1, x2) => {
+      expect(pipe($.vec2(x1, x2))).toStrictEqual([x1, x2]);
+    });
+  });
+});
+
+describe('vec3', () => {
+  it('creates array of length 3', () => {
+    fc.property(fc.string(), fc.string(), fc.string(), (x1, x2, x3) => {
+      expect(pipe($.vec2(x1, x2))).toStrictEqual([x1, x2, x3]);
     });
   });
 });
