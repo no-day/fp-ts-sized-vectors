@@ -1,9 +1,10 @@
 /** @since 1.0.0 */
 
 import * as A from 'fp-ts/ReadonlyArray'
-import * as F from 'fp-ts/Functor'
+import { Functor2 } from 'fp-ts/Functor'
 import * as P from 'fp-ts/Pointed'
 import { pipe } from 'fp-ts/function'
+import { Apply2 } from 'fp-ts/lib/Apply'
 
 // -----------------------------------------------------------------------------
 // Model
@@ -99,10 +100,24 @@ export const map = <T1, T2>(f: (x: T1) => T2) => <N>(
 ): Vec<N, T2> => A.map(f)(vec as ReadonlyArray<T1>) as Vec<N, T2>
 
 // --------------------------------------------------------------------------------------------------------------------
+// Apply
+// --------------------------------------------------------------------------------------------------------------------
+
+/**
+ * @since 0.1.0
+ * @category Apply
+ */
+export const ap = <N, T1>(vec: Vec<N, T1>) => <T2>(
+  f: Vec<N, (x: T1) => T2>
+): Vec<N, T2> => A.ap(f as any)(vec as any) as Vec<N, T2>
+
+// --------------------------------------------------------------------------------------------------------------------
 // Non-pipeables
 // --------------------------------------------------------------------------------------------------------------------
 
-const map_: F.Functor2<URI>['map'] = (fa, f) => pipe(fa, map(f))
+const map_: Functor2<URI>['map'] = (fa, f) => pipe(fa, map(f))
+
+const ap_: Apply2<URI>['ap'] = (fa, f) => pipe(fa, ap(f))
 
 // --------------------------------------------------------------------------------------------------------------------
 // Instances
@@ -130,7 +145,7 @@ declare module 'fp-ts/HKT' {
  * @since 0.1.0
  * @category Instances
  */
-export const Functor: F.Functor2<URI> = { URI: URI, map: map_ }
+export const Functor: Functor2<URI> = { URI: URI, map: map_ }
 
 /**
  * @since 0.1.0
@@ -140,6 +155,12 @@ export const getPointed = <N extends number>(n: N): P.Pointed<URI> => ({
   URI: URI,
   of: getOf(n),
 })
+
+/**
+ * @since 0.1.0
+ * @category Instances
+ */
+export const Apply: Apply2<URI> = { ...Functor, ap: ap_ }
 
 // -----------------------------------------------------------------------------
 // Internal

@@ -78,3 +78,26 @@ describe('Pointed', () => {
     })
   })
 })
+
+describe('Apply', () => {
+  describe('ap', () => {
+    it('applies the functions to all fields', () => {
+      fc.property(fc.float(), fc.float(), fc.float(), (x1, x2, x3) => {
+        expect(
+          pipe(
+            $.vec3(
+              (x: number) => x.toString() + 'A',
+              (x: number) => x.toString() + 'B',
+              (x: number) => x.toString() + 'C'
+            ),
+            $.ap($.vec3(x1, x2, x3))
+          )
+        ).toStrictEqual([
+          x1.toString() + 'A',
+          x2.toString() + 'B',
+          x3.toString() + 'C',
+        ])
+      })
+    })
+  })
+})
