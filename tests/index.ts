@@ -68,3 +68,13 @@ describe('Functor', () => {
     })
   })
 })
+
+describe('Pointed', () => {
+  describe('getOf', () => {
+    it('creates an array of length 3 filled the same value', () => {
+      fc.property(fc.float(), (x1) => {
+        expect(pipe($.getOf(3)(x1))).toStrictEqual([x1, x1, x1])
+      })
+    })
+  })
+})
