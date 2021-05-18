@@ -5,6 +5,7 @@ import { Functor2 } from 'fp-ts/Functor'
 import * as P from 'fp-ts/Pointed'
 import { pipe } from 'fp-ts/function'
 import { Apply2 } from 'fp-ts/lib/Apply'
+import { Semiring } from 'fp-ts/lib/Semiring'
 
 // -----------------------------------------------------------------------------
 // Model
@@ -99,9 +100,9 @@ export const map = <T1, T2>(f: (x: T1) => T2) => <N>(
   vec: Vec<N, T1>
 ): Vec<N, T2> => A.map(f)(vec as ReadonlyArray<T1>) as Vec<N, T2>
 
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Apply
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * @since 0.1.0
@@ -109,19 +110,47 @@ export const map = <T1, T2>(f: (x: T1) => T2) => <N>(
  */
 export const ap = <N, T1>(vec: Vec<N, T1>) => <T2>(
   f: Vec<N, (x: T1) => T2>
-): Vec<N, T2> => A.ap(f as any)(vec as any) as Vec<N, T2>
+): Vec<N, T2> => zip1(f as any)(vec as any) as Vec<N, T2>
 
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Semiring
+// -----------------------------------------------------------------------------
+
+// export const add = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
+//   vec2: Vec<N, T>
+// ): Vec<N, T> => map2_(St.add, pt1, pt2)
+
+// export const zero = <T>(St: S.Semiring<T>): Point2d<T> => of(St.zero)
+
+// export const one = <T>(St: S.Semiring<T>): Point2d<T> => of(St.one)
+
+// export const mul = <T>(St: S.Semiring<T>) => (pt1: Point2d<T>) => (
+//   pt2: Point2d<T>
+// ): Point2d<T> =>
+//   pipe(
+//     of((x: T) => (y: T) => St.mul(x, y)),
+//     ap(pt1),
+//     ap(pt2)
+//   )
+
+// export const getSemiring = <T>(St: S.Semiring<T>): S.Semiring<Point2d<T>> => ({
+//   add: add_(St),
+//   zero: zero(St),
+//   one: one(St),
+//   mul: mul_(St),
+// })
+
+// -----------------------------------------------------------------------------
 // Non-pipeables
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 const map_: Functor2<URI>['map'] = (fa, f) => pipe(fa, map(f))
 
 const ap_: Apply2<URI>['ap'] = (fa, f) => pipe(fa, ap(f))
 
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Instances
-// --------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * @since 0.1.0
@@ -183,8 +212,22 @@ type Succ<N extends number> = Add<N, 1>
 
 type G<N extends number> = Add<1, N>
 
-// const overArray = <T1, T2>(f: (xs: ReadonlyArray<T1>) => ReadonlyArray<T2>) => <
-//   N extends number
-// >(
-//   vec: Vec<N, T1>
-// ): Vec<N, T2> => f(vec as ReadonlyArray<T1>) as Vec<N, T2>;
+const zip1 = <N, T1, T2>(fs: Vec<N, (x: T1) => T2>) => (
+  vec: Vec<N, T1>
+): Vec<N, T2> => {
+  let out: any = []
+  for (const i in fs) {
+    out[i] = (fs as any)[i](vec[i])
+  }
+  return out as any
+}
+
+const zip2 = <N, T1, T2, T3>(fs: Vec<N, (x1: T1) => (x2: T2) => T3>) => (
+  vec1: Vec<N, T1>
+) => (vec2: Vec<N, T2>): Vec<N, T2> => {
+  let out: any = []
+  for (const i in fs) {
+    out[i] = (fs as any)[i](vec1[i])(vec2[i])
+  }
+  return out as any
+}
