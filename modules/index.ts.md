@@ -12,6 +12,8 @@ Added in v1.0.0
 
 <h2 class="text-delta">Table of contents</h2>
 
+- [Apply](#apply)
+  - [ap](#ap)
 - [Contructors](#contructors)
   - [empty](#empty)
   - [singleton](#singleton)
@@ -20,6 +22,7 @@ Added in v1.0.0
 - [Functor](#functor)
   - [map](#map)
 - [Instances](#instances)
+  - [Apply](#apply-1)
   - [Functor](#functor-1)
   - [URI](#uri)
   - [URI (type alias)](#uri-type-alias)
@@ -33,6 +36,18 @@ Added in v1.0.0
   - [prepend](#prepend)
 
 ---
+
+# Apply
+
+## ap
+
+**Signature**
+
+```ts
+export declare const ap: <N, T1>(vec: Vec<N, T1>) => <T2>(f: Vec<N, (x: T1) => T2>) => Vec<N, T2>
+```
+
+Added in v0.1.0
 
 # Contructors
 
@@ -100,12 +115,22 @@ Added in v0.1.0
 
 # Instances
 
+## Apply
+
+**Signature**
+
+```ts
+export declare const Apply: Apply2<'Vec'>
+```
+
+Added in v0.1.0
+
 ## Functor
 
 **Signature**
 
 ```ts
-export declare const Functor: F.Functor2<'Vec'>
+export declare const Functor: Functor2<'Vec'>
 ```
 
 Added in v0.1.0
