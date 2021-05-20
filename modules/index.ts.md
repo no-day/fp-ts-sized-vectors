@@ -6,7 +6,7 @@ parent: Modules
 
 ## index overview
 
-Added in v1.0.0
+Added in v0.1.0
 
 ---
 
@@ -15,7 +15,9 @@ Added in v1.0.0
 - [Apply](#apply)
   - [ap](#ap)
 - [Contructors](#contructors)
+  - [append](#append)
   - [empty](#empty)
+  - [prepend](#prepend)
   - [singleton](#singleton)
   - [vec2](#vec2)
   - [vec3](#vec3)
@@ -30,10 +32,13 @@ Added in v1.0.0
 - [Model](#model)
   - [Vec (type alias)](#vec-type-alias)
 - [Pointed](#pointed)
-  - [getOf](#getof)
-- [X](#x)
-  - [append](#append)
-  - [prepend](#prepend)
+  - [of](#of)
+- [Semiring](#semiring)
+  - [add](#add)
+  - [one](#one)
+  - [zero](#zero)
+- [Utils](#utils)
+  - [lookup](#lookup)
 
 ---
 
@@ -44,12 +49,28 @@ Added in v1.0.0
 **Signature**
 
 ```ts
-export declare const ap: <N, T1>(vec: Vec<N, T1>) => <T2>(f: Vec<N, (x: T1) => T2>) => Vec<N, T2>
+export declare const ap: <N, T1>(vec: Vec<N, T1>) => <T2>(fs: Vec<N, (x: T1) => T2>) => Vec<N, T2>
 ```
 
 Added in v0.1.0
 
 # Contructors
+
+## append
+
+Append a value to the end of a vector
+
+**Signature**
+
+```ts
+export declare const append: <T>(
+  x: T
+) => <N extends number>(
+  xs: Vec<N, T>
+) => Vec<If<Not<IsNumLiteral<N>> extends true ? true : false, number, [...TupleOf<N, any, []>, any]['length']>, T>
+```
+
+Added in v0.1.0
 
 ## empty
 
@@ -61,7 +82,23 @@ Create an empty vector
 export declare const empty: <T>() => Vec<0, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
+
+## prepend
+
+Prepend a value to the front of a vector
+
+**Signature**
+
+```ts
+export declare const prepend: <T>(
+  x: T
+) => <N extends number>(
+  xs: Vec<N, T>
+) => Vec<If<Not<IsNumLiteral<N>> extends true ? true : false, number, [...TupleOf<N, any, []>, any]['length']>, T>
+```
+
+Added in v0.1.0
 
 ## singleton
 
@@ -73,7 +110,7 @@ Construct a vector containing only a single element
 export declare const singleton: <T>(x: T) => Vec<1, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## vec2
 
@@ -85,7 +122,7 @@ Shortcut for creating a 2d-Vec
 export declare const vec2: <T>(x: T, y: T) => Vec<2, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 ## vec3
 
@@ -97,7 +134,7 @@ Shortcut for creating a 3d-Vec
 export declare const vec3: <T>(x: T, y: T, z: T) => Vec<3, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Functor
 
@@ -177,46 +214,76 @@ Vector type of length `N` with fields of type `A`
 export type Vec<N, A> = ReadonlyArray<A> & { _N: N; _A: A; _URI: URI }
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
 # Pointed
 
-## getOf
+## of
 
 **Signature**
 
 ```ts
-export declare const getOf: <N extends number>(n: N) => <T>(x: T) => Vec<N, T>
+export declare const of: <N extends number>(n: N) => <T>(x: T) => Vec<N, T>
 ```
 
 Added in v0.1.0
 
-# X
+# Semiring
 
-## append
-
-Append a value to the end of a vector
+## add
 
 **Signature**
 
 ```ts
-export declare const append: <T>(
-  x: T
-) => <N extends number>(xs: Vec<N, T>) => Vec<OnlyAs<number, [...TupleOf<N, any, []>, any]['length']>, T>
+export declare const add: <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (vec2: Vec<N, T>) => Vec<N, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
 
-## prepend
-
-Prepend a value to the front of a vector
+## one
 
 **Signature**
 
 ```ts
-export declare const prepend: <T>(
-  x: T
-) => <N extends number>(xs: Vec<N, T>) => Vec<OnlyAs<number, [...TupleOf<N, any, []>, any]['length']>, T>
+export declare const one: <N extends number>(n: N) => <T>(St: Semiring<T>) => Vec<N, T>
 ```
 
-Added in v1.0.0
+Added in v0.1.0
+
+## zero
+
+**Signature**
+
+```ts
+export declare const zero: <N extends number>(n: N) => <T>(St: Semiring<T>) => Vec<N, T>
+```
+
+Added in v0.1.0
+
+# Utils
+
+## lookup
+
+TODO
+
+**Signature**
+
+```ts
+export declare const lookup: <I extends number>(
+  i: I
+) => <N extends number, T>(
+  vec: Vec<N, T>
+) => If<
+  IsNumLiteral<I> extends true
+    ? IsNumLiteral<N> extends true
+      ? LT<I, N> extends true
+        ? true
+        : false
+      : false
+    : false,
+  T,
+  unknown
+>
+```
+
+Added in v0.1.0
