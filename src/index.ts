@@ -6,6 +6,8 @@ import * as P from 'fp-ts/Pointed'
 import { pipe } from 'fp-ts/function'
 import { Apply2 } from 'fp-ts/lib/Apply'
 import { Semiring } from 'fp-ts/lib/Semiring'
+import { Ring } from 'fp-ts/lib/Ring'
+import { Field } from 'fp-ts/lib/Field'
 
 // -----------------------------------------------------------------------------
 // model
@@ -161,21 +163,22 @@ export const one = <N extends number>(n: N) => <T>(
   St: Semiring<T>
 ): Vec<N, T> => of(n)(St.one)
 
-// export const mul = <T>(St: S.Semiring<T>) => (pt1: Point2d<T>) => (
-//   pt2: Point2d<T>
-// ): Point2d<T> =>
-//   pipe(
-//     of((x: T) => (y: T) => St.mul(x, y)),
-//     ap(pt1),
-//     ap(pt2)
-//   )
+/**
+ * @since 0.1.0
+ * @category Semiring
+ */
+export const mul = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
+  vec2: Vec<N, T>
+): Vec<N, T> => zip2(St.mul)(vec1, vec2)
 
-// export const getSemiring = <T>(St: S.Semiring<T>): S.Semiring<Point2d<T>> => ({
-//   add: add_(St),
-//   zero: zero(St),
-//   one: one(St),
-//   mul: mul_(St),
-// })
+export const getSemiring = <N extends number>(n: N) => <T>(
+  St: Semiring<T>
+): Semiring<Vec<N, T>> => ({
+  add: add_<N>()(St),
+  zero: zero(n)(St),
+  one: one(n)(St),
+  mul: mul_<N>()(St),
+})
 
 // -----------------------------------------------------------------------------
 // Non-pipeables
@@ -184,6 +187,14 @@ export const one = <N extends number>(n: N) => <T>(
 const map_: Functor2<URI>['map'] = (fa, f) => pipe(fa, map(f))
 
 const ap_: Apply2<URI>['ap'] = (fa, f) => pipe(fa, ap(f))
+
+const add_: <N>() => <T>(
+  St: Semiring<T>
+) => Semiring<Vec<N, T>>['add'] = () => (St) => (p1, p2) => add(St)(p1)(p2)
+
+const mul_: <N>() => <T>(
+  St: Semiring<T>
+) => Semiring<Vec<N, T>>['mul'] = () => (St) => (p1, p2) => mul(St)(p1)(p2)
 
 // -----------------------------------------------------------------------------
 // instances
