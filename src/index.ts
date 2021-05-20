@@ -83,7 +83,7 @@ export const vec3 = <T>(x: T, y: T, z: T): Vec<3, T> => [x, y, z] as any
  * @since 0.1.0
  * @category Pointed
  */
-export const getOf = <N extends number>(n: N) => <T>(x: T): Vec<N, T> =>
+export const of = <N extends number>(n: N) => <T>(x: T): Vec<N, T> =>
   A.replicate(n, x) as any
 
 // -----------------------------------------------------------------------------
@@ -126,9 +126,13 @@ export const add = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
   vec2: Vec<N, T>
 ): Vec<N, T> => zip2(St.add)(vec1, vec2)
 
-// export const zero = <T>(St: S.Semiring<T>): Point2d<T> => of(St.zero)
+export const zero = <N extends number>(n: N) => <T>(
+  St: Semiring<T>
+): Vec<N, T> => of(n)(St.zero)
 
-// export const one = <T>(St: S.Semiring<T>): Point2d<T> => of(St.one)
+export const one = <N extends number>(n: N) => <T>(
+  St: Semiring<T>
+): Vec<N, T> => of(n)(St.one)
 
 // export const mul = <T>(St: S.Semiring<T>) => (pt1: Point2d<T>) => (
 //   pt2: Point2d<T>
@@ -188,7 +192,7 @@ export const Functor: Functor2<URI> = { URI: URI, map: map_ }
  */
 export const getPointed = <N extends number>(n: N): P.Pointed<URI> => ({
   URI: URI,
-  of: getOf(n),
+  of: of(n),
 })
 
 /**

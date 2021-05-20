@@ -87,7 +87,7 @@ describe('Pointed', () => {
     it('creates an array of length 3 filled the same value', () => {
       fc.assert(
         fc.property(fc.float(), (x1) => {
-          expect(pipe($.getOf(3)(x1))).toStrictEqual([x1, x1, x1])
+          expect(pipe($.of(3)(x1))).toStrictEqual([x1, x1, x1])
         })
       )
     })
@@ -120,8 +120,8 @@ describe('Apply', () => {
 })
 
 describe('Semiring', () => {
-  describe('adds two vectors', () => {
-    it('...', () => {
+  describe('add', () => {
+    it('adds two vectors', () => {
       fc.assert(
         fc.property(
           fc.tuple(fc.float(), fc.float(), fc.float()),
@@ -137,6 +137,26 @@ describe('Semiring', () => {
           }
         )
       )
+    })
+  })
+
+  describe('zero', () => {
+    it('produces a zero vector', () => {
+      expect($.zero(3)(N.Semiring)).toStrictEqual([
+        N.Semiring.zero,
+        N.Semiring.zero,
+        N.Semiring.zero,
+      ])
+    })
+  })
+
+  describe('one', () => {
+    it('produces a unit vector', () => {
+      expect($.one(3)(N.Semiring)).toStrictEqual([
+        N.Semiring.one,
+        N.Semiring.one,
+        N.Semiring.one,
+      ])
     })
   })
 })
