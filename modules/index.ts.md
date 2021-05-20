@@ -35,6 +35,8 @@ Added in v0.1.0
   - [of](#of)
 - [Semiring](#semiring)
   - [add](#add)
+  - [getSemiring](#getsemiring)
+  - [mul](#mul)
   - [one](#one)
   - [zero](#zero)
 - [Utils](#utils)
@@ -240,6 +242,26 @@ export declare const add: <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (vec2:
 
 Added in v0.1.0
 
+## getSemiring
+
+**Signature**
+
+```ts
+export declare const getSemiring: <N extends number>(n: N) => <T>(St: Semiring<T>) => Semiring<Vec<N, T>>
+```
+
+Added in v0.1.0
+
+## mul
+
+**Signature**
+
+```ts
+export declare const mul: <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (vec2: Vec<N, T>) => Vec<N, T>
+```
+
+Added in v0.1.0
+
 ## one
 
 **Signature**
@@ -264,7 +286,8 @@ Added in v0.1.0
 
 ## lookup
 
-TODO
+Get the element at a given index inside a vector. Index out of bounds errors
+are caught at compile time.
 
 **Signature**
 
