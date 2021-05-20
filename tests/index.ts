@@ -1,6 +1,7 @@
 import * as $ from '../src'
 import * as fc from 'fast-check'
 import { pipe } from 'fp-ts/function'
+import * as N from 'fp-ts-number-instances'
 
 describe('Constructors', () => {
   describe('empty', () => {
@@ -113,6 +114,28 @@ describe('Apply', () => {
             x3.toString() + 'C',
           ])
         })
+      )
+    })
+  })
+})
+
+describe('Semiring', () => {
+  describe('adds two vectors', () => {
+    it('...', () => {
+      fc.assert(
+        fc.property(
+          fc.tuple(fc.float(), fc.float(), fc.float()),
+          fc.tuple(fc.float(), fc.float(), fc.float()),
+          ([a1, a2, a3], [b1, b2, b3]) => {
+            const va = $.vec3(a1, a2, a3)
+            const vb = $.vec3(b1, b2, b3)
+            expect($.add(N.Semiring)(va)(vb)).toStrictEqual([
+              a1 + b1,
+              a2 + b2,
+              a3 + b3,
+            ])
+          }
+        )
       )
     })
   })

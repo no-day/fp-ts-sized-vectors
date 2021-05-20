@@ -109,16 +109,22 @@ export const map = <T1, T2>(f: (x: T1) => T2) => <N>(
  * @category Apply
  */
 export const ap = <N, T1>(vec: Vec<N, T1>) => <T2>(
-  f: Vec<N, (x: T1) => T2>
-): Vec<N, T2> => zip1(f as any)(vec as any) as Vec<N, T2>
+  fs: Vec<N, (x: T1) => T2>
+): Vec<N, T2> => {
+  let out: any = []
+  for (const i in fs) {
+    out[i] = (fs as any)[i](vec[i])
+  }
+  return out as any
+}
 
 // -----------------------------------------------------------------------------
 // Semiring
 // -----------------------------------------------------------------------------
 
-// export const add = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
-//   vec2: Vec<N, T>
-// ): Vec<N, T> => map2_(St.add, pt1, pt2)
+export const add = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
+  vec2: Vec<N, T>
+): Vec<N, T> => zip2(St.add)(vec1, vec2)
 
 // export const zero = <T>(St: S.Semiring<T>): Point2d<T> => of(St.zero)
 
@@ -212,22 +218,23 @@ type Succ<N extends number> = Add<N, 1>
 
 type G<N extends number> = Add<1, N>
 
-const zip1 = <N, T1, T2>(fs: Vec<N, (x: T1) => T2>) => (
-  vec: Vec<N, T1>
-): Vec<N, T2> => {
+const zip = <T1, TR>(f: (x1: T1) => TR) => <N>(
+  vec1: Vec<N, T1>
+): Vec<N, TR> => {
   let out: any = []
-  for (const i in fs) {
-    out[i] = (fs as any)[i](vec[i])
+  for (const i in vec1) {
+    out[i] = (f as any)(vec1[i])
   }
   return out as any
 }
 
-const zip2 = <N, T1, T2, T3>(fs: Vec<N, (x1: T1) => (x2: T2) => T3>) => (
-  vec1: Vec<N, T1>
-) => (vec2: Vec<N, T2>): Vec<N, T2> => {
+const zip2 = <T1, T2, TR>(f: (x1: T1, x2: T2) => TR) => <N>(
+  vec1: Vec<N, T1>,
+  vec2: Vec<N, T2>
+): Vec<N, TR> => {
   let out: any = []
-  for (const i in fs) {
-    out[i] = (fs as any)[i](vec1[i])(vec2[i])
+  for (const i in vec1) {
+    out[i] = (f as any)(vec1[i], vec2[i])
   }
   return out as any
 }
