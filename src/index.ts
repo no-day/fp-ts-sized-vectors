@@ -82,7 +82,8 @@ export const vec3 = <T>(x: T, y: T, z: T): Vec<3, T> => [x, y, z] as any
 // -----------------------------------------------------------------------------
 
 /**
- * TODO
+ * Get the element at a given index inside a vector. Index out of bounds errors
+ * are caught at compile time.
  *
  * @since 0.1.0
  * @category Utils
@@ -171,6 +172,10 @@ export const mul = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
   vec2: Vec<N, T>
 ): Vec<N, T> => zip2(St.mul)(vec1, vec2)
 
+/**
+ * @since 0.1.0
+ * @category Semiring
+ */
 export const getSemiring = <N extends number>(n: N) => <T>(
   St: Semiring<T>
 ): Semiring<Vec<N, T>> => ({
