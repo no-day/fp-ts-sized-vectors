@@ -170,9 +170,9 @@ describe('Semiring', () => {
             const va = $.vec3(a1, a2, a3)
             const vb = $.vec3(b1, b2, b3)
             expect($.mul(N.Semiring)(va)(vb)).toStrictEqual([
-              a1 + b1,
-              a2 + b2,
-              a3 + b3,
+              a1 * b1,
+              a2 * b2,
+              a3 * b3,
             ])
           }
         )
