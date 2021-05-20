@@ -3,7 +3,7 @@ import * as fc from 'fast-check'
 import { pipe } from 'fp-ts/function'
 import * as N from 'fp-ts-number-instances'
 
-describe('Constructors', () => {
+describe('constructors', () => {
   describe('empty', () => {
     it('creates an empty array', () => {
       expect($.empty()).toStrictEqual([])
@@ -157,6 +157,19 @@ describe('Semiring', () => {
         N.Semiring.one,
         N.Semiring.one,
       ])
+    })
+  })
+})
+
+describe('utils', () => {
+  describe('lookup', () => {
+    it('receives a value in bounds', () => {
+      const a: string = $.lookup(0)($.vec2('a', 'b'))
+      expect(a).toStrictEqual('a')
+    })
+    it('rejects a value in out of bounds', () => {
+      const a: unknown = $.lookup(3)($.vec2('a', 'b'))
+      expect(a).toStrictEqual(undefined)
     })
   })
 })

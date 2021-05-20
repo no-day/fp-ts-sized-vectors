@@ -1,7 +1,7 @@
 {
   "name": "fp-ts-library-template",
   "homepage": "https://github.com/no-day/fp-ts-library-template",
-  "version": "1.0.0-rc.1",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "license": "MIT",
   "peerDependencies": {

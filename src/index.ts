@@ -1,4 +1,4 @@
-/** @since 1.0.0 */
+/** @since 0.1.0 */
 
 import * as A from 'fp-ts/ReadonlyArray'
 import { Functor2 } from 'fp-ts/Functor'
@@ -8,25 +8,25 @@ import { Apply2 } from 'fp-ts/lib/Apply'
 import { Semiring } from 'fp-ts/lib/Semiring'
 
 // -----------------------------------------------------------------------------
-// Model
+// model
 // -----------------------------------------------------------------------------
 
 /**
  * Vector type of length `N` with fields of type `A`
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Model
  */
 export type Vec<N, A> = ReadonlyArray<A> & { _N: N; _A: A; _URI: URI }
 
 // -----------------------------------------------------------------------------
-// Contructors
+// contructors
 // -----------------------------------------------------------------------------
 
 /**
  * Create an empty vector
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Contructors
  */
 export const empty = <T>(): Vec<0, T> => [] as any
@@ -34,8 +34,8 @@ export const empty = <T>(): Vec<0, T> => [] as any
 /**
  * Prepend a value to the front of a vector
  *
- * @since 1.0.0
- * @category X
+ * @since 0.1.0
+ * @category Contructors
  */
 export const prepend = <T>(x: T) => <N extends number>(
   xs: Vec<N, T>
@@ -44,8 +44,8 @@ export const prepend = <T>(x: T) => <N extends number>(
 /**
  * Append a value to the end of a vector
  *
- * @since 1.0.0
- * @category X
+ * @since 0.1.0
+ * @category Contructors
  */
 export const append = <T>(x: T) => <N extends number>(
   xs: Vec<N, T>
@@ -54,7 +54,7 @@ export const append = <T>(x: T) => <N extends number>(
 /**
  * Construct a vector containing only a single element
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Contructors
  */
 export const singleton = <T>(x: T): Vec<1, T> => [x] as any
@@ -62,7 +62,7 @@ export const singleton = <T>(x: T): Vec<1, T> => [x] as any
 /**
  * Shortcut for creating a 2d-Vec
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Contructors
  */
 export const vec2 = <T>(x: T, y: T): Vec<2, T> => [x, y] as any
@@ -70,10 +70,25 @@ export const vec2 = <T>(x: T, y: T): Vec<2, T> => [x, y] as any
 /**
  * Shortcut for creating a 3d-Vec
  *
- * @since 1.0.0
+ * @since 0.1.0
  * @category Contructors
  */
 export const vec3 = <T>(x: T, y: T, z: T): Vec<3, T> => [x, y, z] as any
+
+// -----------------------------------------------------------------------------
+// utils
+// -----------------------------------------------------------------------------
+
+/**
+ * TODO
+ *
+ * @since 0.1.0
+ * @category Utils
+ */
+export const lookup = <I extends number>(i: I) => <N extends number, T>(
+  vec: Vec<N, T>
+): If<And<[IsNumLiteral<I>, IsNumLiteral<N>, LT<I, N>]>, T, unknown> =>
+  vec[i] as any
 
 // -----------------------------------------------------------------------------
 // Pointed
@@ -122,14 +137,26 @@ export const ap = <N, T1>(vec: Vec<N, T1>) => <T2>(
 // Semiring
 // -----------------------------------------------------------------------------
 
+/**
+ * @since 0.1.0
+ * @category Semiring
+ */
 export const add = <T>(St: Semiring<T>) => <N>(vec1: Vec<N, T>) => (
   vec2: Vec<N, T>
 ): Vec<N, T> => zip2(St.add)(vec1, vec2)
 
+/**
+ * @since 0.1.0
+ * @category Semiring
+ */
 export const zero = <N extends number>(n: N) => <T>(
   St: Semiring<T>
 ): Vec<N, T> => of(n)(St.zero)
 
+/**
+ * @since 0.1.0
+ * @category Semiring
+ */
 export const one = <N extends number>(n: N) => <T>(
   St: Semiring<T>
 ): Vec<N, T> => of(n)(St.one)
@@ -159,7 +186,7 @@ const map_: Functor2<URI>['map'] = (fa, f) => pipe(fa, map(f))
 const ap_: Apply2<URI>['ap'] = (fa, f) => pipe(fa, ap(f))
 
 // -----------------------------------------------------------------------------
-// Instances
+// instances
 // -----------------------------------------------------------------------------
 
 /**
@@ -206,12 +233,13 @@ export const Apply: Apply2<URI> = { ...Functor, ap: ap_ }
 // -----------------------------------------------------------------------------
 
 type TupleOf<
-  N extends number,
+  N extends number = number,
   X = any,
   xs extends any[] = []
 > = xs['length'] extends N ? xs : TupleOf<N, X, [...xs, X]>
 
-type Add<N extends number, M extends number> = OnlyAs<
+type Add<N extends number, M extends number> = If<
+  Or<[IsNum<N>, IsNum<M>]>,
   number,
   [...TupleOf<N>, ...TupleOf<M>]['length']
 >
@@ -220,7 +248,42 @@ type OnlyAs<X, T> = T extends X ? T : never
 
 type Succ<N extends number> = Add<N, 1>
 
-type G<N extends number> = Add<1, N>
+type LT<N1 extends number, N2 extends number> = Compare<N1, N2> extends 'LT'
+  ? true
+  : false
+
+type IsNumLiteral<N extends number> = number extends N ? false : true
+
+type IsNum<N extends number> = Not<IsNumLiteral<N>>
+
+type Not<B extends boolean> = B extends true ? false : true
+
+type Compare<N1 extends number, N2 extends number> = Compare_<
+  TupleOf<N1>,
+  TupleOf<N2>
+>
+
+type And<Bs> = Bs extends [infer head, ...infer tail]
+  ? head extends true
+    ? And<tail>
+    : false
+  : true
+
+type Or<Bs> = Bs extends [infer head, ...infer tail]
+  ? head extends true
+    ? true
+    : Or<tail>
+  : false
+
+type Compare_<N1, N2> = [N1, N2] extends [[], []]
+  ? 'EQ'
+  : [N1, N2] extends [[infer _, ...infer tail1], [infer _, ...infer tail2]]
+  ? Compare_<tail1, tail2>
+  : N1 extends [infer _, ...infer tail]
+  ? 'GT'
+  : 'LT'
+
+type If<P extends boolean, T, F> = P extends true ? T : F
 
 const zip = <T1, TR>(f: (x1: T1) => TR) => <N>(
   vec1: Vec<N, T1>
