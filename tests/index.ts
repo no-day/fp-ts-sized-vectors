@@ -34,31 +34,51 @@ describe('constructors', () => {
     })
   })
 
-  describe('singleton', () => {
+  describe('concat', () => {
+    it('Concatenates two vectors', () => {
+      fc.assert(
+        fc.property(
+          fc.string(),
+          fc.string(),
+          fc.string(),
+          fc.string(),
+          fc.string(),
+          (a1, a2, a3, b1, b2) => {
+            expect($.concat($.vec(a1, a2, a3))($.vec(b1, b2))).toStrictEqual([
+              a1,
+              a2,
+              a3,
+              b1,
+              b2,
+            ])
+          }
+        )
+      )
+    })
+  })
+
+  describe('vec', () => {
+    it('creates array of length 0', () => {
+      expect(pipe($.vec())).toStrictEqual([])
+    })
     it('creates array of length 1', () => {
       fc.assert(
-        fc.property(fc.string(), (x1) => {
-          expect(pipe($.singleton(x1))).toStrictEqual([x1])
+        fc.property(fc.string(), (c1) => {
+          expect(pipe($.vec(c1))).toStrictEqual([c1])
         })
       )
     })
-  })
-
-  describe('vec2', () => {
     it('creates array of length 2', () => {
       fc.assert(
-        fc.property(fc.string(), fc.string(), (x1, x2) => {
-          expect(pipe($.vec2(x1, x2))).toStrictEqual([x1, x2])
+        fc.property(fc.string(), fc.string(), (c1, c2) => {
+          expect(pipe($.vec(c1, c2))).toStrictEqual([c1, c2])
         })
       )
     })
-  })
-
-  describe('vec3', () => {
     it('creates array of length 3', () => {
       fc.assert(
-        fc.property(fc.string(), fc.string(), fc.string(), (x1, x2, x3) => {
-          expect(pipe($.vec3(x1, x2, x3))).toStrictEqual([x1, x2, x3])
+        fc.property(fc.string(), fc.string(), fc.string(), (c1, c2, c3) => {
+          expect(pipe($.vec(c1, c2, c3))).toStrictEqual([c1, c2, c3])
         })
       )
     })
@@ -72,7 +92,7 @@ describe('Functor', () => {
         fc.property(fc.float(), fc.float(), fc.float(), (x1, x2, x3) => {
           expect(
             pipe(
-              $.vec3(x1, x2, x3),
+              $.vec(x1, x2, x3),
               $.map((x) => x.toString())
             )
           ).toStrictEqual([x1.toString(), x2.toString(), x3.toString()])
@@ -101,12 +121,12 @@ describe('Apply', () => {
         fc.property(fc.float(), fc.float(), fc.float(), (x1, x2, x3) => {
           expect(
             pipe(
-              $.vec3(
+              $.vec(
                 (x: number) => x.toString() + 'A',
                 (x: number) => x.toString() + 'B',
                 (x: number) => x.toString() + 'C'
               ),
-              $.ap($.vec3(x1, x2, x3))
+              $.ap($.vec(x1, x2, x3))
             )
           ).toStrictEqual([
             x1.toString() + 'A',
@@ -127,8 +147,8 @@ describe('Semiring', () => {
           fc.tuple(fc.float(), fc.float(), fc.float()),
           fc.tuple(fc.float(), fc.float(), fc.float()),
           ([a1, a2, a3], [b1, b2, b3]) => {
-            const va = $.vec3(a1, a2, a3)
-            const vb = $.vec3(b1, b2, b3)
+            const va = $.vec(a1, a2, a3)
+            const vb = $.vec(b1, b2, b3)
             expect($.add(N.Semiring)(va)(vb)).toStrictEqual([
               a1 + b1,
               a2 + b2,
@@ -167,8 +187,8 @@ describe('Semiring', () => {
           fc.tuple(fc.float(), fc.float(), fc.float()),
           fc.tuple(fc.float(), fc.float(), fc.float()),
           ([a1, a2, a3], [b1, b2, b3]) => {
-            const va = $.vec3(a1, a2, a3)
-            const vb = $.vec3(b1, b2, b3)
+            const va = $.vec(a1, a2, a3)
+            const vb = $.vec(b1, b2, b3)
             expect($.mul(N.Semiring)(va)(vb)).toStrictEqual([
               a1 * b1,
               a2 * b2,
@@ -184,11 +204,11 @@ describe('Semiring', () => {
 describe('utils', () => {
   describe('lookup', () => {
     it('receives a value in bounds', () => {
-      const a: string = $.lookup(0)($.vec2('a', 'b'))
+      const a: string = $.lookup(0)($.vec('a', 'b'))
       expect(a).toStrictEqual('a')
     })
     it('rejects a value in out of bounds', () => {
-      const a: unknown = $.lookup(3)($.vec2('a', 'b'))
+      const a: unknown = $.lookup(3)($.vec('a', 'b'))
       expect(a).toStrictEqual(undefined)
     })
   })

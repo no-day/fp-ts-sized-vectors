@@ -1,18 +1,66 @@
-import * as V from '../src'
+// < imports
+import * as V from 'fp-ts-sized-vectors'
 import * as N from 'fp-ts-number-instances'
-
+import { pipe } from 'fp-ts/function'
+import * as assert from 'assert'
 import Vec = V.Vec
 
-const my2dVec: Vec<2, number> = V.vec2(31.5, 87.2)
+// >
 
-const x2: number = V.lookup(0)(my2dVec)
-const y2: number = V.lookup(1)(my2dVec)
-const z2: unknown = V.lookup(2)(my2dVec)
+// < vecA
+const vecA: Vec<2, number> = V.vec(10, 20)
 
-const my3dVec: Vec<3, number> = V.append(0.0)(my2dVec)
+assert.deepStrictEqual(vecA, [10, 20])
+// >
 
-const x3: number = V.lookup(0)(my3dVec)
-const y3: number = V.lookup(1)(my3dVec)
-const z3: number = V.lookup(2)(my3dVec)
+// < vecB
+const vecB: Vec<3, number> = V.vec(30, 40, 50)
 
-const my3dVec2: Vec<3, number> = V.add(N.Semiring)(my3dVec)(my3dVec)
+assert.deepStrictEqual(vecB, [30, 40, 50])
+// >
+
+// < concat
+const vecAB: Vec<5, number> = V.concat(vecA)(vecB)
+
+assert.deepStrictEqual(vecAB, [10, 20, 30, 40, 50])
+// >
+
+// < lookupA
+const a_0: number = V.lookup(0)(vecA)
+const a_1: number = V.lookup(1)(vecA)
+const a_2: unknown = V.lookup(2)(vecA)
+// >
+
+// < lookupB
+const b_0: number = V.lookup(0)(vecB)
+const b_1: number = V.lookup(1)(vecB)
+const b_2: number = V.lookup(2)(vecB)
+const b_3: unknown = V.lookup(3)(vecB)
+// >
+
+// < lookupAB
+const ab_0: number = V.lookup(0)(vecAB)
+const ab_1: number = V.lookup(1)(vecAB)
+const ab_2: number = V.lookup(2)(vecAB)
+const ab_3: number = V.lookup(3)(vecAB)
+const ab_4: number = V.lookup(4)(vecAB)
+const ab_5: unknown = V.lookup(5)(vecAB)
+// >
+
+// < vecStr
+const vecStr: Vec<3, string> = V.vec('Hello', 'World', '!')
+// >
+
+// < vecMath
+import NS = N.Semiring
+
+const vecR: Vec<3, number> = pipe(
+  V.vec(1, 2, 3),
+  V.mul(NS)(V.vec(2, 2, 2)),
+  V.add(NS)(V.vec(0.1, 0.2, 0.3))
+)
+
+assert.deepStrictEqual(vecR, [2.1, 4.2, 6.3])
+// >
+
+const vecC: Vec<3, number> = V.add(N.Semiring)(vecB)(vecB)

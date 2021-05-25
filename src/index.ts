@@ -54,29 +54,31 @@ export const append = <T>(x: T) => <N extends number>(
 ): Vec<Succ<N>, T> => [...xs, x as any] as any
 
 /**
- * Construct a vector containing only a single element
+ * Concatenates two vectors of sizes N and M resulting in a vector of size N+M
  *
  * @since 0.1.0
  * @category Contructors
  */
-export const singleton = <T>(x: T): Vec<1, T> => [x] as any
+export const concat = <T, N extends number>(v1: Vec<N, T>) => <
+  M extends number
+>(
+  v2: Vec<M, T>
+): Vec<Add<N, M>, T> => [...v1, ...v2] as any
 
 /**
- * Shortcut for creating a 2d-Vec
+ * Create a vector of n dimensions
  *
  * @since 0.1.0
  * @category Contructors
  */
-export const vec2 = <T>(x: T, y: T): Vec<2, T> => [x, y] as any
-
-/**
- * Shortcut for creating a 3d-Vec
- *
- * @since 0.1.0
- * @category Contructors
- */
-export const vec3 = <T>(x: T, y: T, z: T): Vec<3, T> => [x, y, z] as any
-
+export const vec: {
+  <T>(c1: T, c2: T, c3: T, c4: T, c5: T): Vec<5, T>
+  <T>(c1: T, c2: T, c3: T, c4: T): Vec<4, T>
+  <T>(c1: T, c2: T, c3: T): Vec<3, T>
+  <T>(c1: T, c2: T): Vec<2, T>
+  <T>(c1: T): Vec<1, T>
+  <T>(): Vec<0, T>
+} = (...cs: any[]) => cs as any
 // -----------------------------------------------------------------------------
 // utils
 // -----------------------------------------------------------------------------
