@@ -16,11 +16,10 @@ Added in v0.1.0
   - [ap](#ap)
 - [Contructors](#contructors)
   - [append](#append)
+  - [concat](#concat)
   - [empty](#empty)
   - [prepend](#prepend)
-  - [singleton](#singleton)
-  - [vec2](#vec2)
-  - [vec3](#vec3)
+  - [vec](#vec)
 - [Functor](#functor)
   - [map](#map)
 - [Instances](#instances)
@@ -74,6 +73,29 @@ export declare const append: <T>(
 
 Added in v0.1.0
 
+## concat
+
+Concatenates two vectors of sizes N and M resulting in a vector of size N+M
+
+**Signature**
+
+```ts
+export declare const concat: <T, N extends number>(
+  v1: Vec<N, T>
+) => <M extends number>(
+  v2: Vec<M, T>
+) => Vec<
+  If<
+    Not<IsNumLiteral<N>> extends true ? true : Not<IsNumLiteral<M>> extends true ? true : false,
+    number,
+    [...TupleOf<N, any, []>, ...TupleOf<M, any, []>]['length']
+  >,
+  T
+>
+```
+
+Added in v0.1.0
+
 ## empty
 
 Create an empty vector
@@ -102,38 +124,21 @@ export declare const prepend: <T>(
 
 Added in v0.1.0
 
-## singleton
+## vec
 
-Construct a vector containing only a single element
-
-**Signature**
-
-```ts
-export declare const singleton: <T>(x: T) => Vec<1, T>
-```
-
-Added in v0.1.0
-
-## vec2
-
-Shortcut for creating a 2d-Vec
+Create a vector of n dimensions
 
 **Signature**
 
 ```ts
-export declare const vec2: <T>(x: T, y: T) => Vec<2, T>
-```
-
-Added in v0.1.0
-
-## vec3
-
-Shortcut for creating a 3d-Vec
-
-**Signature**
-
-```ts
-export declare const vec3: <T>(x: T, y: T, z: T) => Vec<3, T>
+export declare const vec: {
+  <T>(c1: T, c2: T, c3: T, c4: T, c5: T): Vec<5, T>
+  <T>(c1: T, c2: T, c3: T, c4: T): Vec<4, T>
+  <T>(c1: T, c2: T, c3: T): Vec<3, T>
+  <T>(c1: T, c2: T): Vec<2, T>
+  <T>(c1: T): Vec<1, T>
+  <T>(): Vec<0, T>
+}
 ```
 
 Added in v0.1.0
