@@ -7,16 +7,14 @@
 <!-- GEN:START (TOC) -->
 
 - [Install](#install)
-- [Example](#example)
+- [Examples](#examples)
   - [Imports](#imports)
   - [Construction](#construction)
   - [Operations on vectors](#operations-on-vectors)
   - [Lookups](#lookups)
-    - [Vec 2](#vec-2)
-    - [Vec 3](#vec-3)
-    - [Vec 5](#vec-5)
+  - [Vectors of anything](#vectors-of-anything)
   - [Vector math](#vector-math)
-- [Limitation](#limitation)
+- [Limitations](#limitations)
 - [TODO (PR's welcome)](#todo-prs-welcome)
 <!-- GEN:END -->
 
@@ -32,7 +30,7 @@ or
 npm install fp-ts fp-ts-sized-vectors
 ```
 
-## Example
+## Examples
 
 ### Imports
 
@@ -97,13 +95,13 @@ assert.deepStrictEqual(vecAB, [10, 20, 30, 40, 50])
 
 ### Lookups
 
-The fact that the vectors carry their lengths as typelevel information gives us many useful compile time guarantees.
+The fact that the vectors carry their lengths as type level information gives us many useful compile time guarantees.
 Below you can see that we receive a `number` for _in range_ indices and something of type `unknown` for _out of bounds_ indices.
 That works because we specify the indices as number literals.
 
 We do not receive any union types like `number | undefined` or `Option<number>`. That's one of the main advantages over the `Array` type.
 
-#### Vec 2
+Vec 2
 
 <!-- GEN:START (SNIPPET:file=./examples/one.ts&name=lookupA) -->
 
@@ -115,7 +113,7 @@ const a_2: unknown = V.lookup(2)(vecA)
 
 <!-- GEN:END -->
 
-#### Vec 3
+Vec 3
 
 <!-- GEN:START (SNIPPET:file=./examples/one.ts&name=lookupB) -->
 
@@ -128,7 +126,7 @@ const b_3: unknown = V.lookup(3)(vecB)
 
 <!-- GEN:END -->
 
-#### Vec 5
+Vec 5
 
 <!-- GEN:START (SNIPPET:file=./examples/one.ts&name=lookupAB) -->
 
@@ -145,7 +143,7 @@ const ab_5: unknown = V.lookup(5)(vecAB)
 
 ### Vectors of anything
 
-The size of vectors are caputured as typelevel numbers, their inner value can be of arbitrary types. In the above example we used the `number` type as that's quite common. But we could also just define a vector of strings:
+The size of vectors are captured as type level numbers, their inner value can be of arbitrary types. In the above example we used the `number` type as that's quite common. But we could also just define a vector of strings:
 
 <!-- GEN:START (SNIPPET:file=./examples/one.ts&name=vecStr) -->
 
@@ -174,8 +172,6 @@ const vecR: Vec<3, number> = pipe(
 
 assert.deepStrictEqual(vecR, [2.1, 4.2, 6.3])
 ```
-
-The above calculation only compiles if all vectors are of the same length. This is another situation where we profit from the type level lengths.
 
 <!-- GEN:END -->
 

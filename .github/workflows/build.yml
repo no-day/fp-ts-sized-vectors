@@ -22,6 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn install
       - run: yarn run build
+      - run: yarn run example
       - run: yarn test
 
   deploy-docs:
@@ -34,6 +35,7 @@ jobs:
         run: |
           yarn install
           yarn run build
+          yarn run example
           yarn test
           yarn docs
 
